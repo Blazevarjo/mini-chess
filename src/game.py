@@ -1,26 +1,26 @@
 import pygame
+from board import Board
 from pieces import Bishop, Rook
 
 
 def main():
     pygame.init()
-    screen = pygame.display.set_mode((800, 800))
+
+    screen = pygame.display.set_mode((900, 800))
     clock = pygame.time.Clock()
+    board = Board()
+
     running = True
-    sprites_group = pygame.sprite.Group()
-    rook1 = Rook('B', 0, 0)
-    rook2 = Rook('W', 1, 0)
-    bishop1 = Bishop('W', 2, 0)
-
-    sprites_group.add([rook1, rook2, bishop1])
-
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
 
+        # sprites_group.draw(screen)
         pygame.display.flip()
-        sprites_group.draw(screen)
+
+        screen.blit(board, (200, 100))
+
         clock.tick(60)
 
 
