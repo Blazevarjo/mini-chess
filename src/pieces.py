@@ -2,6 +2,10 @@ import pygame
 
 
 class Piece(pygame.sprite.Sprite):
+    board_margin_x = 18
+    board_margin_y = 23
+    square_side_length = 80
+
     symbol = None
     piece_name = None
 
@@ -11,10 +15,13 @@ class Piece(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.image = pygame.image.load(
-            "assets/pieces/{}{}.png".format(self.piece_name, self.color))
+            f"assets/pieces/{self.piece_name}{self.color}.png")
         self.rect = self.image.get_rect()
-        self.rect.x = 20 + 80*x
-        self.rect.y = 20 + 80*y
+        self.rect.x = self.board_margin_x + self.square_side_length * self.x
+        self.rect.y = self.board_margin_y + self.square_side_length * self.y
+
+    def __str__(self):
+        return f'{self.piece_name} x:{self.x} y:{self.y}'
 
 
 class Bishop(Piece):
