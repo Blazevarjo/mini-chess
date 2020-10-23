@@ -13,11 +13,21 @@ class Piece(pygame.sprite.Sprite):
         self.image = pygame.image.load(
             f"assets/pieces/{self.piece_name}{self.color}.png")
         self.rect = self.image.get_rect()
-        self.rect.x = 18 + 80*x
-        self.rect.y = 23 + 80*y
+        self.SetRectPosition()
 
     def __str__(self):
         return f'{self.piece_name} x:{self.x} y:{self.y}'
+
+    def SetRectPosition(self):
+        self.rect.x = 18 + 80 * self.x
+        self.rect.y = 23 + 80 * self.y
+
+    # set new position for piece (x, y) and rect (x, y)
+    def SetNewPosition(self):
+        # get values from center of field        
+        self.x = round((self.rect.x - 18) / 80)
+        self.y = round((self.rect.y - 23) / 80)
+        self.SetRectPosition()
 
 
 class Bishop(Piece):

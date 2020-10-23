@@ -23,11 +23,22 @@ class Board(pygame.Surface):
             [Rook('B', 0, 5), Knight('B', 1, 5), Queen('B', 2, 5),
              King('B', 3, 5), Knight('B', 4, 5), Rook('B', 5, 5)]
         ]
-        sprites_group = pygame.sprite.Group()
 
         # flatten 2d array and get only valid pieces to draw (delete None values)
         self.sprites = [
             piece for row in self.array for piece in row if piece is not None]
 
-        sprites_group.add(self.sprites)
-        sprites_group.draw(self)
+        self.sprites_group = pygame.sprite.Group()
+        self.sprites_group.add(self.sprites)
+
+    # update sprites on screen and draw them
+    def Update(self, screen):        
+        pass
+
+    # checking all pieces which can collide with given coords
+    def GetCollidedPiece(self, pos):
+        for piece in self.sprites:
+            if piece.rect.collidepoint(pos):
+                return piece
+
+        return None
