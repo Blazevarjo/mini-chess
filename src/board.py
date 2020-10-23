@@ -1,4 +1,5 @@
 import pygame
+
 from pieces import (
     King,
     Knight,

@@ -2,6 +2,10 @@ import pygame
 
 
 class Piece(pygame.sprite.Sprite):
+    board_margin_x = 18
+    board_margin_y = 23
+    square_side_length = 80
+
     symbol = None
     piece_name = None
 
@@ -13,8 +17,8 @@ class Piece(pygame.sprite.Sprite):
         self.image = pygame.image.load(
             f"assets/pieces/{self.piece_name}{self.color}.png")
         self.rect = self.image.get_rect()
-        self.rect.x = 18 + 80*x
-        self.rect.y = 23 + 80*y
+        self.rect.x = self.board_margin_x + self.square_side_length * self.x
+        self.rect.y = self.board_margin_y + self.square_side_length * self.y
 
     def __str__(self):
         return f'{self.piece_name} x:{self.x} y:{self.y}'
