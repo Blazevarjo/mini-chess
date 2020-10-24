@@ -1,5 +1,9 @@
 import pygame
+
 from board import Board
+
+SCREEN_WIDTH = 900
+SCREEN_HEIGHT = 800
 
 
 def main():
@@ -8,12 +12,12 @@ def main():
     is_piece_draging = False
     focused_piece = None
 
-    board_offset_x = 0
-    board_offset_y = 0
-
-    screen = pygame.display.set_mode((900, 800))
+    screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
     board = Board()
+
+    board_offset_x = (screen.get_width() - board.get_width()) // 2
+    board_offset_y = (screen.get_height() - board.get_height()) // 2
 
     running = True
     while running:
