@@ -47,10 +47,10 @@ def main():
                     focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
                     focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
 
-        screen.blit(board, (board_offset_x, board_offset_y))
-        
         # update objects on screen
         board.Update()
+
+        screen.blit(board, (board_offset_x, board_offset_y))
         pygame.display.flip()
 
         clock.tick(60)

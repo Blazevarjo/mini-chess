@@ -32,8 +32,8 @@ class Board(pygame.Surface):
         self.sprites_group.add(self.sprites)
 
     # update sprites on screen and draw them
-    def Update(self):        
-        self.blit(self.image, (0,0))
+    def Update(self):
+        self.blit(self.image, [0, 0])
         self.sprites_group.draw(self)
 
     # checking all pieces which can collide with given coords
