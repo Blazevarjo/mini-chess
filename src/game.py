@@ -50,7 +50,7 @@ def main():
         screen.blit(board, (board_offset_x, board_offset_y))
         
         # update objects on screen
-        board.sprites_group.draw(screen)
+        board.Update()
         pygame.display.flip()
 
         clock.tick(60)

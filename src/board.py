@@ -10,7 +10,7 @@ from pieces import (
 
 class Board(pygame.Surface):
     def __init__(self):
-        super().__init__([520, 521])
+        super().__init__([520, 519])
         self.image = pygame.image.load('assets/Chess_Board.png')
         self.blit(self.image, [0, 0])
         self.array = [
@@ -32,8 +32,9 @@ class Board(pygame.Surface):
         self.sprites_group.add(self.sprites)
 
     # update sprites on screen and draw them
-    def Update(self, screen):        
-        pass
+    def Update(self):        
+        self.blit(self.image, (0,0))
+        self.sprites_group.draw(self)
 
     # checking all pieces which can collide with given coords
     def GetCollidedPiece(self, pos):
