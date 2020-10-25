@@ -26,7 +26,7 @@ def main():
                     x = event.pos[0] - board_offset_x
                     y = event.pos[1] - board_offset_y
 
-                    focused_piece = board.GetCollidedPiece((x, y))
+                    focused_piece = board.get_collided_piece((x, y))
 
                     if focused_piece is not None:
                         is_piece_draging = True
@@ -48,7 +48,7 @@ def main():
                     focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
 
         # update objects on screen
-        board.Update()
+        board.update()
 
         screen.blit(board, (board_offset_x, board_offset_y))
         pygame.display.flip()
