@@ -2,7 +2,7 @@ import pygame
 from pygame import Color
 
 from pieces import (
-    King,
+    Bishop, King,
     Knight,
     Pawn,
     Rook,
@@ -21,7 +21,7 @@ class Board(pygame.Surface):
             [Pawn('B', x, 1) for x in range(6)],
             [None for x in range(6)],
             [None for x in range(6)],
-            [None for x in range(6)],
+            [Pawn('W', x, 4) for x in range(6)],
             [Rook('W', 0, 5), Knight('W', 1, 5), King('W', 2, 5),
              Queen('W', 3, 5), Knight('W', 4, 5), Rook('W', 5, 5)]
         ]
@@ -65,6 +65,7 @@ class Board(pygame.Surface):
             for piece in row:
                 print(f'{str(piece):^20}', end='')
             print()
+        print()
 
     def draw_valid_moves(self, piece):
         for x, y in piece.valid_moves_position(self.array):

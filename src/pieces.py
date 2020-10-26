@@ -102,29 +102,106 @@ def valid_lane_moves(x, y, color, chessboard_array):
     return valid_moves
 
 
+def valid_diagonal_moves(x, y, color, chessboard_array):
+    valid_moves = set()
+    for i in (-1, 1):
+        for z in (-1, 1):
+            x_try = x
+            y_try = y
+            while(True):
+                x_try += i
+                y_try += z
+                if is_valid_inbound(x_try, y_try, color, chessboard_array):
+                    if is_valid_attack(x_try, y_try, color, chessboard_array):
+                        valid_moves.add((x_try, y_try))
+                        break
+                    valid_moves.add((x_try, y_try))
+                else:
+                    break
+
+    return valid_moves
+
+
 class Bishop(Piece):
     symbol = 'B'
     piece_name = "Bishop"
+
+    def valid_moves(self, board):
+        return valid_diagonal_moves(self.x, self.y, self.color, board)
 
 
 class King(Piece):
     symbol = 'K'
     piece_name = 'King'
 
+    def valid_moves(self, board):
+        valid_moves = set()
+
+        for i in (-1, 0, 1):
+            for j in (-1, 0, 1):
+                if i == j == 0:
+                    continue
+                x_try = self.x + i
+                y_try = self.y + j
+
+                if is_valid_inbound(x_try, y_try, self.color, board):
+                    valid_moves.add((x_try, y_try))
+
+        return valid_moves
+
 
 class Knight(Piece):
     symbol = 'N'
     piece_name = 'Knight'
+
+    def valid_moves(self, board):
+        valid_moves = set()
+
+        for i in (-1, 1):
+            for j in (-2, 2):
+                x_try = self.x + i
+                y_try = self.y + j
+                if is_valid_inbound(x_try, y_try, self.color, board):
+                    valid_moves.add((x_try, y_try))
+
+        for i in (-2, 2):
+            for j in (-1, 1):
+                x_try = self.x + i
+                y_try = self.y + j
+                if is_valid_inbound(x_try, y_try, self.color, board):
+                    valid_moves.add((x_try, y_try))
+
+        return valid_moves
 
 
 class Pawn(Piece):
     symbol = 'P'
     piece_name = 'Pawn'
 
+    def valid_moves(self, board):
+        valid_moves = set()
+
+        if self.color == 'W':
+            y_try = self.y - 1
+            if board[y_try][self.x] is None:
+                valid_moves.add((self.x, y_try))
+        elif self.color == 'B':
+            y_try = self.y + 1
+            if board[y_try][self.x] is None:
+                valid_moves.add((self.x, y_try))
+
+        return valid_moves
+
 
 class Queen(Piece):
     symbol = 'Q'
     piece_name = 'Queen'
+
+    def valid_moves(self, board):
+        diagonal_moves = valid_diagonal_moves(
+            self.x, self.y, self.color, board)
+        lane_moves = valid_lane_moves(self.x, self.y, self.color, board)
+        return diagonal_moves.union(lane_moves)
 
 
 class Rook(Piece):
