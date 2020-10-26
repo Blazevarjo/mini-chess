@@ -4,6 +4,7 @@ from board import Board
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 800
+board = Board()
 
 
 def main():
@@ -14,7 +15,6 @@ def main():
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
-    board = Board()
 
     board_offset_x = (screen.get_width() - board.get_width()) // 2
     board_offset_y = (screen.get_height() - board.get_height()) // 2
@@ -41,7 +41,7 @@ def main():
                 if event.button == 1:
                     is_piece_draging = False
                     if focused_piece is not None:
-                        focused_piece.set_new_position()
+                        board.set_piece_position(focused_piece)
 
             elif event.type == pygame.MOUSEMOTION:
                 if is_piece_draging:
@@ -50,6 +50,11 @@ def main():
                     # move a piece
                     focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
                     focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
+
+        board.blit_self()
+
+        if is_piece_draging:
+            board.draw_valid_moves(focused_piece)
 
         # update objects on screen
         board.update()
