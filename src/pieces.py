@@ -53,11 +53,10 @@ class Piece(pygame.sprite.Sprite):
 
 def is_valid_attack(x, y, color, chessboard_array):
     check_square = chessboard_array[y][x]
-
+    # check if square contains piece and if it does it checks
+    # if it's the same color as yours, if not you can attack
     if isinstance(check_square, Piece):
-        if check_square.color == color:
-            return False
-        return True
+        return not (check_square.color == color)
 
     return False
 
