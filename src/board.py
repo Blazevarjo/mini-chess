@@ -1,7 +1,8 @@
 import pygame
+from pygame import Color
 
 from pieces import (
-    King,
+    Bishop, King,
     Knight,
     Pawn,
     Rook,
@@ -33,8 +34,10 @@ class Board(pygame.Surface):
         self.sprites_group.add(self.sprites)
 
     # update sprites on screen and draw them
-    def update(self):
+    def blit_self(self):
         self.blit(self.image, [0, 0])
+
+    def update(self):
         self.sprites_group.draw(self)
 
     # checking all pieces which can collide with given coords
@@ -44,3 +47,26 @@ class Board(pygame.Surface):
                 return piece
 
         return None
+
+    def set_piece_position(self, focused_piece):
+        # set old position to None
+        for y, row in enumerate(self.array):
+            for x in range(len(row)):
+                if self.array[x][y] is focused_piece:
+                    self.array[x][y] = None
+
+        focused_piece.set_new_position(self.array)
+
+        # assign new position of piece to board array
+        self.array[focused_piece.y][focused_piece.x] = focused_piece
+
+        # dev env
+        for row in self.array:
+            for piece in row:
+                print(f'{str(piece):^20}', end='')
+            print()
+        print()
+
+    def draw_valid_moves(self, piece):
+        for x, y in piece.valid_moves_position(self.array):
+            pygame.draw.rect(self, [255, 0, 0], [x+10, y + 10, 60, 60], 5)
