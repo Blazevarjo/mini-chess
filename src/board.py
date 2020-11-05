@@ -1,5 +1,4 @@
 import pygame
-from pygame import Color
 
 from pieces import (
     Bishop, King,
@@ -55,9 +54,16 @@ class Board(pygame.Surface):
                 if self.array[x][y] is focused_piece:
                     self.array[x][y] = None
 
+        # assign new position of piece to board array
         focused_piece.set_new_position(self.array)
 
-        # assign new position of piece to board array
+        attacked_piece = self.array[focused_piece.y][focused_piece.x]
+
+        # remove attacked piece
+        if attacked_piece is not None and attacked_piece is not focused_piece:
+            attacked_piece.kill()
+            self.sprites.remove(attacked_piece)
+
         self.array[focused_piece.y][focused_piece.x] = focused_piece
 
         # dev env
