@@ -182,12 +182,27 @@ class Pawn(Piece):
 
         if self.color == 'W':
             y_try = self.y - 1
+
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
+
+            if self.x - 1 > 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == 'B':
+                valid_moves.add((self.x - 1, y_try))
+
+            if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == 'B':
+                valid_moves.add((self.x + 1, y_try))
+
         elif self.color == 'B':
             y_try = self.y + 1
+
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
+
+            if self.x - 1 > 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == 'W':
+                valid_moves.add((self.x - 1, y_try))
+
+            if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == 'W':
+                valid_moves.add((self.x + 1, y_try))
 
         return valid_moves
 
@@ -200,6 +215,7 @@ class Queen(Piece):
         diagonal_moves = valid_diagonal_moves(
             self.x, self.y, self.color, board)
         lane_moves = valid_lane_moves(self.x, self.y, self.color, board)
+
         return diagonal_moves.union(lane_moves)
 
 
