@@ -1,6 +1,7 @@
 import pygame
 
 from board import Board
+from pieces import WHITE, BLACK
 
 SCREEN_WIDTH = 900
 SCREEN_HEIGHT = 800
@@ -12,6 +13,9 @@ def main():
 
     is_piece_draging = False
     focused_piece = None
+
+    current_player = WHITE
+    is_check = False
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
@@ -30,18 +34,13 @@ def main():
                     x = event.pos[0] - board_offset_x
                     y = event.pos[1] - board_offset_y
 
-                    focused_piece = board.get_collided_piece((x, y))
+                    focused_piece = board.get_collided_piece(
+                        (x, y), current_player)
 
                     if focused_piece is not None:
                         is_piece_draging = True
                         mouse_offset_x = focused_piece.rect.x - x
                         mouse_offset_y = focused_piece.rect.y - y
-
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    is_piece_draging = False
-                    if focused_piece is not None:
-                        board.set_piece_position(focused_piece)
 
             elif event.type == pygame.MOUSEMOTION:
                 if is_piece_draging:
@@ -50,6 +49,17 @@ def main():
                     # move a piece
                     focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
                     focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
+
+            elif event.type == pygame.MOUSEBUTTONUP:
+                if event.button == 1:
+                    is_piece_draging = False
+
+                    if focused_piece is not None:
+                        is_pawn_moved = board.set_piece_position(focused_piece)
+
+                        # change turn
+                        if is_pawn_moved:
+                            current_player = BLACK if current_player == WHITE else WHITE
 
         board.blit_self()
 

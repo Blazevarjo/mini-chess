@@ -3,9 +3,10 @@ import pygame
 from pieces import (
     Bishop, King,
     Knight,
-    Pawn,
+    Pawn, Piece,
     Rook,
-    Queen
+    Queen,
+    WHITE, BLACK
 )
 
 
@@ -15,14 +16,14 @@ class Board(pygame.Surface):
         self.image = pygame.image.load('assets/Chess_Board.png')
         self.blit(self.image, [0, 0])
         self.array = [
-            [Rook('B', 0, 0), Knight('B', 1, 0), King('B', 2, 0),
-             Queen('B', 3, 0), Knight('B', 4, 0), Rook('B', 5, 0)],
-            [Pawn('B', x, 1) for x in range(6)],
+            [Rook(BLACK, 0, 0), Knight(BLACK, 1, 0), King(BLACK, 2, 0),
+             Queen(BLACK, 3, 0), Knight(BLACK, 4, 0), Rook(BLACK, 5, 0)],
+            [Pawn(BLACK, x, 1) for x in range(6)],
             [None for x in range(6)],
             [None for x in range(6)],
-            [Pawn('W', x, 4) for x in range(6)],
-            [Rook('W', 0, 5), Knight('W', 1, 5), King('W', 2, 5),
-             Queen('W', 3, 5), Knight('W', 4, 5), Rook('W', 5, 5)]
+            [Pawn(WHITE, x, 4) for x in range(6)],
+            [Rook(WHITE, 0, 5), Knight(WHITE, 1, 5), King(WHITE, 2, 5),
+             Queen(WHITE, 3, 5), Knight(WHITE, 4, 5), Rook(WHITE, 5, 5)]
         ]
 
         # flatten 2d array and get only valid pieces to draw (delete None values)
@@ -40,24 +41,28 @@ class Board(pygame.Surface):
         self.sprites_group.draw(self)
 
     # checking all pieces which can collide with given coords
-    def get_collided_piece(self, pos):
+    # and color (only one player can play at the same time!)
+    def get_collided_piece(self, pos, color):
         for piece in self.sprites:
-            if piece.rect.collidepoint(pos):
+            if piece.rect.collidepoint(pos) and piece.color == color:
                 return piece
 
         return None
 
     def set_piece_position(self, focused_piece):
-        # set old position to None
-        for y, row in enumerate(self.array):
-            for x in range(len(row)):
-                if self.array[x][y] is focused_piece:
-                    self.array[x][y] = None
+        old_y, old_x = focused_piece.y, focused_piece.x
 
         # assign new position of piece to board array
         focused_piece.set_new_position(self.array)
 
         attacked_piece = self.array[focused_piece.y][focused_piece.x]
+
+        # when piece didn't move
+        if attacked_piece is self.array[old_y][old_x]:
+            return False
+
+        # set old position to None
+        self.array[old_y][old_x] = None        
 
         # remove attacked piece
         if attacked_piece is not None and attacked_piece is not focused_piece:
@@ -72,6 +77,8 @@ class Board(pygame.Surface):
                 print(f'{str(piece):^20}', end='')
             print()
         print()
+
+        return True
 
     def draw_valid_moves(self, piece):
         for x, y in piece.valid_moves_position(self.array):
