@@ -65,6 +65,9 @@ def main():
 
         board.blit_self()
 
+        if is_check:
+            board.draw_check_warning(current_player)
+
         if is_piece_draging:
             board.draw_valid_moves(focused_piece)
 

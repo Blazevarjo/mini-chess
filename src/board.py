@@ -84,6 +84,14 @@ class Board(pygame.Surface):
         for x, y in piece.valid_moves_position(self.array):
             pygame.draw.rect(self, [255, 0, 0], [x+10, y + 10, 60, 60], 5)
 
+    def draw_check_warning(self, color):
+        for row in self.array:
+            for piece in row:
+                if piece is not None and piece.color == color and piece.piece_name == "King":
+                    pygame.draw.rect(self, [255, 0, 0], [piece.rect.x + 10, piece.rect.y + 10, 60, 60], 5)
+                    return
+
+
     def is_check(self, current_player):
         player_pieces = [
             piece for row in self.array for piece in row if piece is not None and piece.color == current_player]
