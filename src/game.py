@@ -57,8 +57,10 @@ def main():
                     if focused_piece is not None:
                         is_pawn_moved = board.set_piece_position(focused_piece)
 
-                        # change turn
+                        # when pawn is moved
                         if is_pawn_moved:
+                            # maybe there is check
+                            is_check = board.is_check(current_player)
                             current_player = BLACK if current_player == WHITE else WHITE
 
         board.blit_self()

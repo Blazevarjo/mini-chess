@@ -62,7 +62,7 @@ class Board(pygame.Surface):
             return False
 
         # set old position to None
-        self.array[old_y][old_x] = None        
+        self.array[old_y][old_x] = None
 
         # remove attacked piece
         if attacked_piece is not None and attacked_piece is not focused_piece:
@@ -83,3 +83,23 @@ class Board(pygame.Surface):
     def draw_valid_moves(self, piece):
         for x, y in piece.valid_moves_position(self.array):
             pygame.draw.rect(self, [255, 0, 0], [x+10, y + 10, 60, 60], 5)
+
+    def is_check(self, current_player):
+        player_pieces = [
+            piece for row in self.array for piece in row if piece is not None and piece.color == current_player]
+        moves = set()
+
+        for piece in player_pieces:
+            moves.update(piece.valid_moves(self.array))
+
+        opponent_color = current_player = BLACK if current_player == WHITE else WHITE
+
+        opponent_king = None
+
+        for row in self.array:
+            for piece in row:
+                if piece is not None and piece.color == opponent_color and piece.piece_name == "King":
+                    opponent_king = piece
+                    break
+
+        return (opponent_king.x, opponent_king.y) in moves
