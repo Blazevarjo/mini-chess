@@ -27,11 +27,11 @@ class Board(pygame.Surface):
         ]
 
         # flatten 2d array and get only valid pieces to draw (delete None values)
-        self.sprites = [
+        self.pieces = [
             piece for row in self.array for piece in row if piece is not None]
 
         self.sprites_group = pygame.sprite.Group()
-        self.sprites_group.add(self.sprites)
+        self.sprites_group.add(self.pieces)
 
     # update sprites on screen and draw them
     def blit_self(self):
@@ -43,7 +43,7 @@ class Board(pygame.Surface):
     # checking all pieces which can collide with given coords
     # and color (only one player can play at the same time!)
     def get_collided_piece(self, pos, color):
-        for piece in self.sprites:
+        for piece in self.pieces:
             if piece.rect.collidepoint(pos) and piece.color == color:
                 return piece
 
@@ -67,7 +67,7 @@ class Board(pygame.Surface):
         # remove attacked piece
         if attacked_piece is not None and attacked_piece is not focused_piece:
             attacked_piece.kill()
-            self.sprites.remove(attacked_piece)
+            self.pieces.remove(attacked_piece)
 
         self.array[focused_piece.y][focused_piece.x] = focused_piece
 
@@ -92,9 +92,7 @@ class Board(pygame.Surface):
                     return
 
 
-    def is_check(self, current_player):
-        player_pieces = [
-            piece for row in self.array for piece in row if piece is not None and piece.color == current_player]
+        player_pieces = [piece for piece in self.pieces if piece.color == current_player]
         moves = set()
 
         for piece in player_pieces:
