@@ -3,24 +3,29 @@ import pygame
 from board import Board
 from pieces import WHITE, BLACK
 
-SCREEN_WIDTH = 900
-SCREEN_HEIGHT = 800
-board = Board()
-
 
 def main():
     pygame.init()
 
+
+    SCREEN_WIDTH = 900
+    SCREEN_HEIGHT = 800
+    board = Board()
+
     is_piece_draging = False
     focused_piece = None
+    is_check = False
+
+    mouse_offset_x = 0
+    mouse_offset_y = 0
 
     current_player_color = WHITE
     next_player_color = BLACK
-    is_check = False
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     clock = pygame.time.Clock()
 
+    # set center of window
     board_offset_x = (screen.get_width() - board.get_width()) // 2
     board_offset_y = (screen.get_height() - board.get_height()) // 2
 
@@ -35,8 +40,7 @@ def main():
                     x = event.pos[0] - board_offset_x
                     y = event.pos[1] - board_offset_y
 
-                    focused_piece = board.get_collided_piece(
-                        (x, y), current_player_color)
+                    focused_piece = board.get_collided_piece((x, y), current_player_color)
 
                     if focused_piece is not None:
                         is_piece_draging = True
@@ -47,7 +51,7 @@ def main():
                 if is_piece_draging:
                     mouse_x, mouse_y = event.pos
 
-                    # move a piece
+                    # move a piece (in window)
                     focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
                     focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
 
@@ -61,15 +65,18 @@ def main():
                         # when pawn is moved
                         if is_pawn_moved:
                             # maybe there is check
-                            is_check = board.is_check(
-                                current_player_color, next_player_color)
+                            is_check = board.is_check(current_player_color, next_player_color)
 
                             # generate valid moves for next player
                             # but when opponent has no move
                             # it's game over
                             if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
+                                
+                                # but there can be a draw
                                 if board.is_stalemate(current_player_color, next_player_color):
                                     print("Remis")
+
+                                # otherwise one player wins
                                 else:
                                     if current_player_color == WHITE:
                                         print("Wygrał gracz z kolorem biały")
@@ -85,7 +92,6 @@ def main():
                             else:
                                 current_player_color = WHITE
                                 next_player_color = BLACK
-
 
         board.blit_self()
 
