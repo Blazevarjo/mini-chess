@@ -33,8 +33,10 @@ class Piece(pygame.sprite.Sprite):
     # set new position for piece (x, y) and rect (x, y)
     def set_new_position(self, board):
         # get values from center of field
-        x = round((self.rect.x - 18) / 80)
-        y = round((self.rect.y - 23) / 80)
+        x = round((self.rect.x - self.board_margin_x) /
+                  self.square_side_length)
+        y = round((self.rect.y - self.board_margin_y) /
+                  self.square_side_length)
 
         if (x, y) in self.valid_moves(board):
             self.x = x
