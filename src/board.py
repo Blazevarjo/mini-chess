@@ -102,6 +102,7 @@ class Board(pygame.Surface):
         moves = set()
 
         for piece in player_pieces:
+            piece.generate_valid_moves(board)
             moves.update(piece.list_of_valid_moves)
 
         opponent_king = None
