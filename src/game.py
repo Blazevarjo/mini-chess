@@ -61,7 +61,12 @@ def main():
                         if is_pawn_moved:
                             # maybe there is check
                             is_check = board.is_check(current_player)
+
+                            # change player
                             current_player = BLACK if current_player == WHITE else WHITE
+
+                            # generate valid moves for next player
+                            board.generate_valid_moves_for_player_pieces(current_player)
 
         board.blit_self()
 

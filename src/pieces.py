@@ -23,6 +23,8 @@ class Piece(pygame.sprite.Sprite):
 
         self.set_rect_position()
 
+        self.list_of_valid_moves = set()
+
     def __str__(self):
         return f'{self.piece_name} x:{self.x} y:{self.y}'
 
@@ -31,25 +33,28 @@ class Piece(pygame.sprite.Sprite):
         self.rect.y = self.board_margin_y + self.square_side_length * self.y
 
     # set new position for piece (x, y) and rect (x, y)
-    def set_new_position(self, board):
+    def set_new_position(self):
         # get values from center of field
         x = round((self.rect.x - self.board_margin_x) /
                   self.square_side_length)
         y = round((self.rect.y - self.board_margin_y) /
                   self.square_side_length)
 
-        if (x, y) in self.valid_moves(board):
+        if (x, y) in self.list_of_valid_moves:
             self.x = x
             self.y = y
 
         self.set_rect_position()
 
+    def generate_valid_moves(self, board):
+        self.list_of_valid_moves = self.valid_moves(board)
+
     def valid_moves(self, board):
         pass
 
-    def valid_moves_position(self, board):
+    def valid_moves_position(self):
         positions = []
-        for square in self.valid_moves(board):
+        for square in self.list_of_valid_moves:
             x = self.board_margin_x + self.square_side_length * square[0]
             y = self.board_margin_y + self.square_side_length * square[1]
             positions.append((x, y))

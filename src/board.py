@@ -1,4 +1,5 @@
 import pygame
+import copy
 
 from pieces import (
     Bishop, King,
@@ -29,6 +30,9 @@ class Board(pygame.Surface):
         # flatten 2d array and get only valid pieces to draw (delete None values)
         self.pieces = [
             piece for row in self.array for piece in row if piece is not None]
+
+        # generate valid moves for white player
+        self.generate_valid_moves_for_player_pieces(WHITE)
 
         self.sprites_group = pygame.sprite.Group()
         self.sprites_group.add(self.pieces)
@@ -70,6 +74,7 @@ class Board(pygame.Surface):
             self.pieces.remove(attacked_piece)
 
         self.array[focused_piece.y][focused_piece.x] = focused_piece
+        focused_piece.generate_valid_moves(self.array)
 
         # dev env
         for row in self.array:
@@ -81,7 +86,7 @@ class Board(pygame.Surface):
         return True
 
     def draw_valid_moves(self, piece):
-        for x, y in piece.valid_moves_position(self.array):
+        for x, y in piece.valid_moves_position():
             pygame.draw.rect(self, [255, 0, 0], [x+10, y + 10, 60, 60], 5)
 
     def draw_check_warning(self, color):
@@ -96,7 +101,7 @@ class Board(pygame.Surface):
         moves = set()
 
         for piece in player_pieces:
-            moves.update(piece.valid_moves(self.array))
+            moves.update(piece.list_of_valid_moves)
 
         opponent_color = current_player = BLACK if current_player == WHITE else WHITE
 
@@ -109,3 +114,7 @@ class Board(pygame.Surface):
                     break
 
         return (opponent_king.x, opponent_king.y) in moves
+
+    # generate valid moves for all pieces
+    def generate_valid_moves_for_player_pieces(self, color):
+        [piece.generate_valid_moves(self.array) for piece in self.pieces if piece.color == color]
