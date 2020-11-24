@@ -76,13 +76,6 @@ class Board(pygame.Surface):
         self.array[focused_piece.y][focused_piece.x] = focused_piece
         focused_piece.generate_valid_moves(self.array)
 
-        # dev env
-        for row in self.array:
-            for piece in row:
-                print(f'{str(piece):^20}', end='')
-            print()
-        print()
-
         return True
 
     def draw_valid_moves(self, piece):
