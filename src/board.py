@@ -142,3 +142,6 @@ class Board(pygame.Surface):
                 moves.update(piece.list_of_valid_moves)
 
         return moves == set()
+
+    def is_stalemate(self, current_player_color, next_player_color):
+        return self.is_check(current_player_color, next_player_color)

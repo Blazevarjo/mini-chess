@@ -65,11 +65,18 @@ def main():
                                 current_player_color, next_player_color)
 
                             # generate valid moves for next player
+                            # but when opponent has no move
+                            # it's game over
                             if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
-                                if current_player_color == WHITE:
-                                    print("Wygrał gracz z kolorem biały")
+                                if board.is_stalemate(current_player_color, next_player_color):
+                                    print("Remis")
                                 else:
-                                    print("Wygrał gracz z kolorem czarnym")
+                                    if current_player_color == WHITE:
+                                        print("Wygrał gracz z kolorem biały")
+                                    else:
+                                        print("Wygrał gracz z kolorem czarnym")
+
+                                running = False
 
                             # change player
                             if current_player_color == WHITE:
