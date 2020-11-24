@@ -32,7 +32,7 @@ class Board(pygame.Surface):
             piece for row in self.array for piece in row if piece is not None]
 
         # generate valid moves for white player
-        self.generate_valid_moves_for_player_pieces(WHITE)
+        self.generate_valid_moves_for_player_pieces(WHITE, BLACK)
 
         self.sprites_group = pygame.sprite.Group()
         self.sprites_group.add(self.pieces)
@@ -53,28 +53,31 @@ class Board(pygame.Surface):
 
         return None
 
-    def set_piece_position(self, focused_piece):
+    def set_piece_position(self, focused_piece, is_not_fake=True, board=None):
+        if board is None:
+            board = self.array
+
         old_y, old_x = focused_piece.y, focused_piece.x
 
         # assign new position of piece to board array
-        focused_piece.set_new_position(self.array)
+        focused_piece.set_new_position()
 
-        attacked_piece = self.array[focused_piece.y][focused_piece.x]
+        attacked_piece = board[focused_piece.y][focused_piece.x]
 
         # when piece didn't move
-        if attacked_piece is self.array[old_y][old_x]:
+        if attacked_piece is board[old_y][old_x]:
             return False
 
         # set old position to None
-        self.array[old_y][old_x] = None
+        board[old_y][old_x] = None
 
         # remove attacked piece
-        if attacked_piece is not None and attacked_piece is not focused_piece:
+        if is_not_fake and attacked_piece is not None and attacked_piece is not focused_piece:
             attacked_piece.kill()
             self.pieces.remove(attacked_piece)
 
-        self.array[focused_piece.y][focused_piece.x] = focused_piece
-        focused_piece.generate_valid_moves(self.array)
+        board[focused_piece.y][focused_piece.x] = focused_piece
+        focused_piece.generate_valid_moves(board)
 
         return True
 
@@ -86,21 +89,24 @@ class Board(pygame.Surface):
         for row in self.array:
             for piece in row:
                 if piece is not None and piece.color == color and piece.piece_name == "King":
-                    pygame.draw.rect(self, [255, 0, 0], [piece.rect.x + 10, piece.rect.y + 10, 60, 60], 5)
+                    pygame.draw.rect(self, [255, 0, 0], [
+                                     piece.rect.x + 10, piece.rect.y + 10, 60, 60], 5)
                     return
 
+    def is_check(self, current_player, opponent_color, board=None):
+        if board is None:
+            board = self.array
 
-        player_pieces = [piece for piece in self.pieces if piece.color == current_player]
+        player_pieces = [
+            piece for row in board for piece in row if piece is not None and piece.color == current_player]
         moves = set()
 
         for piece in player_pieces:
             moves.update(piece.list_of_valid_moves)
 
-        opponent_color = current_player = BLACK if current_player == WHITE else WHITE
-
         opponent_king = None
 
-        for row in self.array:
+        for row in board:
             for piece in row:
                 if piece is not None and piece.color == opponent_color and piece.piece_name == "King":
                     opponent_king = piece
@@ -109,5 +115,24 @@ class Board(pygame.Surface):
         return (opponent_king.x, opponent_king.y) in moves
 
     # generate valid moves for all pieces
-    def generate_valid_moves_for_player_pieces(self, color):
-        [piece.generate_valid_moves(self.array) for piece in self.pieces if piece.color == color]
+    def generate_valid_moves_for_player_pieces(self, current_player, opponent_color):
+        for piece in self.pieces:
+            if piece.color == current_player:
+                piece.generate_valid_moves(self.array)
+
+                temp_valid_moves = piece.list_of_valid_moves.copy()
+                for move in temp_valid_moves:
+                    copy_piece = copy.copy(piece)
+                    copy_piece.rect = piece.rect.copy()
+
+                    copy_piece.rect.x = move[0] * \
+                        Piece.square_side_length + Piece.board_margin_x
+                    copy_piece.rect.y = move[1] * \
+                        Piece.square_side_length + Piece.board_margin_y
+
+                    temp_board = [row[:] for row in self.array]
+
+                    self.set_piece_position(copy_piece, False, temp_board)
+
+                    if self.is_check(opponent_color, current_player, temp_board):
+                        piece.list_of_valid_moves.remove(move)

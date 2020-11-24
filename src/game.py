@@ -14,7 +14,8 @@ def main():
     is_piece_draging = False
     focused_piece = None
 
-    current_player = WHITE
+    current_player_color = WHITE
+    next_player_color = BLACK
     is_check = False
 
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -35,7 +36,7 @@ def main():
                     y = event.pos[1] - board_offset_y
 
                     focused_piece = board.get_collided_piece(
-                        (x, y), current_player)
+                        (x, y), current_player_color)
 
                     if focused_piece is not None:
                         is_piece_draging = True
@@ -60,18 +61,25 @@ def main():
                         # when pawn is moved
                         if is_pawn_moved:
                             # maybe there is check
-                            is_check = board.is_check(current_player)
+                            is_check = board.is_check(
+                                current_player_color, next_player_color)
 
                             # change player
-                            current_player = BLACK if current_player == WHITE else WHITE
+                            if current_player_color == WHITE:
+                                current_player_color = BLACK
+                                next_player_color = WHITE
+                            else:
+                                current_player_color = WHITE
+                                next_player_color = BLACK
 
                             # generate valid moves for next player
-                            board.generate_valid_moves_for_player_pieces(current_player)
+                            board.generate_valid_moves_for_player_pieces(
+                                current_player_color, next_player_color)
 
         board.blit_self()
 
         if is_check:
-            board.draw_check_warning(current_player)
+            board.draw_check_warning(current_player_color)
 
         if is_piece_draging:
             board.draw_valid_moves(focused_piece)
