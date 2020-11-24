@@ -64,6 +64,13 @@ def main():
                             is_check = board.is_check(
                                 current_player_color, next_player_color)
 
+                            # generate valid moves for next player
+                            if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
+                                if current_player_color == WHITE:
+                                    print("Wygrał gracz z kolorem biały")
+                                else:
+                                    print("Wygrał gracz z kolorem czarnym")
+
                             # change player
                             if current_player_color == WHITE:
                                 current_player_color = BLACK
@@ -72,9 +79,6 @@ def main():
                                 current_player_color = WHITE
                                 next_player_color = BLACK
 
-                            # generate valid moves for next player
-                            board.generate_valid_moves_for_player_pieces(
-                                current_player_color, next_player_color)
 
         board.blit_self()
 

@@ -117,6 +117,7 @@ class Board(pygame.Surface):
 
     # generate valid moves for all pieces
     def generate_valid_moves_for_player_pieces(self, current_player, opponent_color):
+        moves = set()
         for piece in self.pieces:
             if piece.color == current_player:
                 piece.generate_valid_moves(self.array)
@@ -137,3 +138,7 @@ class Board(pygame.Surface):
 
                     if self.is_check(opponent_color, current_player, temp_board):
                         piece.list_of_valid_moves.remove(move)
+
+                moves.update(piece.list_of_valid_moves)
+
+        return moves == set()
