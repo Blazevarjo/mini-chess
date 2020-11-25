@@ -194,6 +194,10 @@ class Pawn(Piece):
         if self.color == WHITE:
             y_try = self.y - 1
 
+            # pawn is on the edge of board
+            if y_try < 0:
+                return valid_moves
+
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
 
@@ -205,6 +209,10 @@ class Pawn(Piece):
 
         elif self.color == BLACK:
             y_try = self.y + 1
+
+            # pawn is on the edge of board
+            if y_try > 5:
+                return valid_moves
 
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
