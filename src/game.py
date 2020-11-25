@@ -59,39 +59,37 @@ def main():
                 if event.button == 1:
                     is_piece_draging = False
 
-                    if focused_piece is not None:
-                        is_pawn_moved = board.set_piece_position(focused_piece)
+                    # when piece is moved
+                    if focused_piece is not None and board.set_piece_position(focused_piece):
+                        
+                        # maybe there is check
+                        is_check = board.is_check(current_player_color, next_player_color)
 
-                        # when pawn is moved
-                        if is_pawn_moved:
-                            # maybe there is check
-                            is_check = board.is_check(current_player_color, next_player_color)
+                        # generate valid moves for next player
+                        # but when opponent has no move
+                        # it's game over
+                        if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
+                            
+                            # but there can be a draw
+                            if board.is_stalemate(current_player_color, next_player_color):
+                                print("Remis")
 
-                            # generate valid moves for next player
-                            # but when opponent has no move
-                            # it's game over
-                            if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
-                                
-                                # but there can be a draw
-                                if board.is_stalemate(current_player_color, next_player_color):
-                                    print("Remis")
-
-                                # otherwise one player wins
-                                else:
-                                    if current_player_color == WHITE:
-                                        print("Wygrał gracz z kolorem biały")
-                                    else:
-                                        print("Wygrał gracz z kolorem czarnym")
-
-                                running = False
-
-                            # change player
-                            if current_player_color == WHITE:
-                                current_player_color = BLACK
-                                next_player_color = WHITE
+                            # otherwise one player wins
                             else:
-                                current_player_color = WHITE
-                                next_player_color = BLACK
+                                if current_player_color == WHITE:
+                                    print("Wygrał gracz z kolorem biały")
+                                else:
+                                    print("Wygrał gracz z kolorem czarnym")
+
+                            running = False
+
+                        # change player
+                        if current_player_color == WHITE:
+                            current_player_color = BLACK
+                            next_player_color = WHITE
+                        else:
+                            current_player_color = WHITE
+                            next_player_color = BLACK
 
         board.blit_self()
 
