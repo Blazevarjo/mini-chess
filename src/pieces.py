@@ -1,5 +1,8 @@
 import pygame
 
+WHITE = "W"
+BLACK = "B"
+
 
 class Piece(pygame.sprite.Sprite):
     board_margin_x = 18
@@ -20,6 +23,8 @@ class Piece(pygame.sprite.Sprite):
 
         self.set_rect_position()
 
+        self.list_of_valid_moves = set()
+
     def __str__(self):
         return f'{self.piece_name} x:{self.x} y:{self.y}'
 
@@ -28,22 +33,28 @@ class Piece(pygame.sprite.Sprite):
         self.rect.y = self.board_margin_y + self.square_side_length * self.y
 
     # set new position for piece (x, y) and rect (x, y)
-    def set_new_position(self, board):
+    def set_new_position(self):
         # get values from center of field
-        x = round((self.rect.x - 18) / 80)
-        y = round((self.rect.y - 23) / 80)
-        if (x, y) in self.valid_moves(board):
+        x = round((self.rect.x - self.board_margin_x) /
+                  self.square_side_length)
+        y = round((self.rect.y - self.board_margin_y) /
+                  self.square_side_length)
+
+        if (x, y) in self.list_of_valid_moves:
             self.x = x
             self.y = y
 
         self.set_rect_position()
 
+    def generate_valid_moves(self, board):
+        self.list_of_valid_moves = self.valid_moves(board)
+
     def valid_moves(self, board):
         pass
 
-    def valid_moves_position(self, board):
+    def valid_moves_position(self):
         positions = []
-        for square in self.valid_moves(board):
+        for square in self.list_of_valid_moves:
             x = self.board_margin_x + self.square_side_length * square[0]
             y = self.board_margin_y + self.square_side_length * square[1]
             positions.append((x, y))
@@ -180,14 +191,37 @@ class Pawn(Piece):
     def valid_moves(self, board):
         valid_moves = set()
 
-        if self.color == 'W':
+        if self.color == WHITE:
             y_try = self.y - 1
+
+            # pawn is on the edge of board
+            if y_try < 0:
+                return valid_moves
+
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
-        elif self.color == 'B':
+
+            if self.x - 1 >= 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == BLACK:
+                valid_moves.add((self.x - 1, y_try))
+
+            if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == BLACK:
+                valid_moves.add((self.x + 1, y_try))
+
+        elif self.color == BLACK:
             y_try = self.y + 1
+
+            # pawn is on the edge of board
+            if y_try > 5:
+                return valid_moves
+
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
+
+            if self.x - 1 >= 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == WHITE:
+                valid_moves.add((self.x - 1, y_try))
+
+            if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == WHITE:
+                valid_moves.add((self.x + 1, y_try))
 
         return valid_moves
 
@@ -200,6 +234,7 @@ class Queen(Piece):
         diagonal_moves = valid_diagonal_moves(
             self.x, self.y, self.color, board)
         lane_moves = valid_lane_moves(self.x, self.y, self.color, board)
+
         return diagonal_moves.union(lane_moves)
 
 
