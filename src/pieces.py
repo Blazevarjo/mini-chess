@@ -201,7 +201,7 @@ class Pawn(Piece):
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
 
-            if self.x - 1 > 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == BLACK:
+            if self.x - 1 >= 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == BLACK:
                 valid_moves.add((self.x - 1, y_try))
 
             if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == BLACK:
@@ -217,7 +217,7 @@ class Pawn(Piece):
             if board[y_try][self.x] is None:
                 valid_moves.add((self.x, y_try))
 
-            if self.x - 1 > 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == WHITE:
+            if self.x - 1 >= 0 and board[y_try][self.x - 1] is not None and board[y_try][self.x - 1].color == WHITE:
                 valid_moves.add((self.x - 1, y_try))
 
             if self.x + 1 < 6 and board[y_try][self.x + 1] is not None and board[y_try][self.x + 1].color == WHITE:
