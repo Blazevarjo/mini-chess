@@ -1,7 +1,7 @@
 import pygame
 
 from board import Board
-from pieces import WHITE, BLACK
+from pieces import Pawn, WHITE, BLACK
 
 
 def main():
@@ -14,6 +14,7 @@ def main():
     is_piece_draging = False
     focused_piece = None
     is_check = False
+    is_promoted = False
 
     mouse_offset_x = 0
     mouse_offset_y = 0
@@ -64,6 +65,10 @@ def main():
                     # when piece is moved
                     if focused_piece is not None and board.set_piece_position(focused_piece):
 
+                        if isinstance(focused_piece, Pawn) and focused_piece.is_promotion():
+                            is_promoted = True
+                            print('promotion')
+
                         # maybe there is check
                         is_check = board.is_check(
                             current_player_color, next_player_color)
@@ -101,6 +106,10 @@ def main():
 
         if is_piece_draging:
             board.draw_valid_moves(focused_piece)
+
+        if is_promoted:
+            board.pawn_promotion(focused_piece)
+            is_promoted = False
 
         # update objects on screen
         board.update()

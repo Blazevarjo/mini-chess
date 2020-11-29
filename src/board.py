@@ -59,8 +59,27 @@ class Board(pygame.Surface):
         self.sprites_group.remove(piece)
         self.sprites_group.add(piece)
 
+    def pawn_promotion(self, pawn):
+        x = input("Podaj litere")
+        promoted_piece = None
+        if x == 'n':
+            promoted_piece = Knight(pawn.color, pawn.x, pawn.y)
+        elif x == 'r':
+            promoted_piece = Rook(pawn.color, pawn.x, pawn.y)
+        elif x == 'q':
+            promoted_piece = Queen(pawn.color, pawn.x, pawn.y)
+        else:
+            print('wrong')
+        self.array[pawn.y][pawn.x] = promoted_piece
+        self.pieces.remove(pawn)
+        self.pieces.append(promoted_piece)
+        # promoted_piece.generate_valid_moves(self.array)
+        pawn.kill()
+        self.sprites_group.add(promoted_piece)
+
     # checking all pieces which can collide with given coords
     # and color (only one player can play at the same time!)
+
     def get_collided_piece(self, pos, color):
         for piece in self.pieces:
             if piece.rect.collidepoint(pos) and piece.color == color:

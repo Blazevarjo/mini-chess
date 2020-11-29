@@ -61,6 +61,10 @@ class Piece(pygame.sprite.Sprite):
 
         return positions
 
+    # check if pawn is in the promotion zone (first or last row)
+    def is_promotion(self):
+        return self.y in [0, 5]
+
 
 def is_valid_attack(x, y, color, chessboard_array):
     check_square = chessboard_array[y][x]
