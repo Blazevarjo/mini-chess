@@ -54,6 +54,11 @@ class Board(pygame.Surface):
     def update(self):
         self.sprites_group.draw(self)
 
+    # bring piece up, to a first layer
+    def move_up(self, piece):
+        self.sprites_group.remove(piece)
+        self.sprites_group.add(piece)
+
     # checking all pieces which can collide with given coords
     # and color (only one player can play at the same time!)
     def get_collided_piece(self, pos, color):
@@ -135,17 +140,17 @@ class Board(pygame.Surface):
                     # check if opponent can KILL current player's king
                     return (piece.x, piece.y) in moves
 
-
     # generate valid moves for all pieces
+
     def generate_valid_moves_for_player_pieces(self, current_player, opponent_color):
         moves = set()
-        
+
         for piece in self.pieces:
             if piece.color == current_player:
                 piece.generate_valid_moves(self.array)
 
                 temp_valid_moves = piece.list_of_valid_moves.copy()
-                
+
                 for move in temp_valid_moves:
                     copy_piece = copy.copy(piece)
                     copy_piece.rect = piece.rect.copy()

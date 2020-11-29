@@ -7,7 +7,6 @@ from pieces import WHITE, BLACK
 def main():
     pygame.init()
 
-
     SCREEN_WIDTH = 900
     SCREEN_HEIGHT = 800
     board = Board()
@@ -40,10 +39,13 @@ def main():
                     x = event.pos[0] - board_offset_x
                     y = event.pos[1] - board_offset_y
 
-                    focused_piece = board.get_collided_piece((x, y), current_player_color)
+                    focused_piece = board.get_collided_piece(
+                        (x, y), current_player_color)
 
                     if focused_piece is not None:
                         is_piece_draging = True
+                        board.move_up(focused_piece)
+
                         mouse_offset_x = focused_piece.rect.x - x
                         mouse_offset_y = focused_piece.rect.y - y
 
@@ -61,15 +63,16 @@ def main():
 
                     # when piece is moved
                     if focused_piece is not None and board.set_piece_position(focused_piece):
-                        
+
                         # maybe there is check
-                        is_check = board.is_check(current_player_color, next_player_color)
+                        is_check = board.is_check(
+                            current_player_color, next_player_color)
 
                         # generate valid moves for next player
                         # but when opponent has no move
                         # it's game over
                         if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
-                            
+
                             # but there can be a draw
                             if board.is_stalemate(current_player_color, next_player_color):
                                 print("Remis")
