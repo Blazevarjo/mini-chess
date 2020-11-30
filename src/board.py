@@ -13,7 +13,7 @@ from pieces import (
 
 class Board(pygame.Surface):
     def __init__(self):
-        BOARD_SIZE = 520
+        BOARD_SIZE = 518
 
         super().__init__([BOARD_SIZE, BOARD_SIZE])
 
