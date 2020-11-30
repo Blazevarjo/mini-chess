@@ -1,6 +1,7 @@
 import pygame
 
 from board import Board
+from dialog import Dialog
 from pieces import Pawn, WHITE, BLACK
 
 
@@ -35,71 +36,106 @@ def main():
             if event.type == pygame.QUIT:
                 running = False
 
-            elif event.type == pygame.MOUSEBUTTONDOWN:
-                if event.button == 1:  # Left Mouse Button
-                    x = event.pos[0] - board_offset_x
-                    y = event.pos[1] - board_offset_y
+            if is_promoted:
+                dialog.handle_events(event)
+            else:
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if event.button == 1:  # Left Mouse Button
+                        x = event.pos[0] - board_offset_x
+                        y = event.pos[1] - board_offset_y
 
-                    focused_piece = board.get_collided_piece(
-                        (x, y), current_player_color)
+                        focused_piece = board.get_collided_piece(
+                            (x, y), current_player_color)
 
-                    if focused_piece is not None:
-                        is_piece_draging = True
-                        board.move_up(focused_piece)
+                        if focused_piece is not None:
+                            is_piece_draging = True
+                            board.move_up(focused_piece)
 
-                        mouse_offset_x = focused_piece.rect.x - x
-                        mouse_offset_y = focused_piece.rect.y - y
+                            mouse_offset_x = focused_piece.rect.x - x
+                            mouse_offset_y = focused_piece.rect.y - y
 
-            elif event.type == pygame.MOUSEMOTION:
-                if is_piece_draging:
-                    mouse_x, mouse_y = event.pos
+                elif event.type == pygame.MOUSEMOTION:
+                    if is_piece_draging:
+                        mouse_x, mouse_y = event.pos
 
-                    # move a piece (in window)
-                    focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
-                    focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
+                        # move a piece (in window)
+                        focused_piece.rect.x = mouse_x - board_offset_x + mouse_offset_x
+                        focused_piece.rect.y = mouse_y - board_offset_y + mouse_offset_y
 
-            elif event.type == pygame.MOUSEBUTTONUP:
-                if event.button == 1:
-                    is_piece_draging = False
+                elif event.type == pygame.MOUSEBUTTONUP:
+                    if event.button == 1:
+                        is_piece_draging = False
 
-                    # when piece is moved
-                    if focused_piece is not None and board.set_piece_position(focused_piece):
+                        # when piece is moved
+                        if focused_piece is not None and board.set_piece_position(focused_piece):
 
-                        if isinstance(focused_piece, Pawn) and focused_piece.is_promotion():
-                            is_promoted = True
-                            print('promotion')
-
-                        # maybe there is check
-                        is_check = board.is_check(
-                            current_player_color, next_player_color)
-
-                        # generate valid moves for next player
-                        # but when opponent has no move
-                        # it's game over
-                        if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
-
-                            # but there can be a draw
-                            if board.is_stalemate(current_player_color, next_player_color):
-                                print("Remis")
-
-                            # otherwise one player wins
+                            if isinstance(focused_piece, Pawn) and focused_piece.is_promotion():
+                                is_promoted = True
+                                dialog = Dialog(focused_piece.color)
                             else:
+                                # maybe there is check
+                                is_check = board.is_check(
+                                    current_player_color, next_player_color)
+
+                                # generate valid moves for next player
+                                # but when opponent has no move
+                                # it's game over
+                                if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
+
+                                    # but there can be a draw
+                                    if board.is_stalemate(current_player_color, next_player_color):
+                                        print("Remis")
+
+                                    # otherwise one player wins
+                                    else:
+                                        if current_player_color == WHITE:
+                                            print(
+                                                "Wygrał gracz z kolorem biały")
+                                        else:
+                                            print(
+                                                "Wygrał gracz z kolorem czarnym")
+
+                                    running = False
+
+                                # change player
                                 if current_player_color == WHITE:
-                                    print("Wygrał gracz z kolorem biały")
+                                    current_player_color = BLACK
+                                    next_player_color = WHITE
                                 else:
-                                    print("Wygrał gracz z kolorem czarnym")
-
-                            running = False
-
-                        # change player
-                        if current_player_color == WHITE:
-                            current_player_color = BLACK
-                            next_player_color = WHITE
-                        else:
-                            current_player_color = WHITE
-                            next_player_color = BLACK
-
+                                    current_player_color = WHITE
+                                    next_player_color = BLACK
         board.blit_self()
+
+        if is_promoted and dialog.piece_choose is not None:
+            board.pawn_promotion(focused_piece, dialog.piece_choose)
+            is_check = board.is_check(current_player_color, next_player_color)
+            if board.generate_valid_moves_for_player_pieces(next_player_color, current_player_color):
+
+                # but there can be a draw
+                if board.is_stalemate(current_player_color, next_player_color):
+                    print("Remis")
+
+                # otherwise one player wins
+                else:
+                    if current_player_color == WHITE:
+                        print(
+                            "Wygrał gracz z kolorem biały")
+                    else:
+                        print(
+                            "Wygrał gracz z kolorem czarnym")
+
+                running = False
+            # change player
+
+            if current_player_color == WHITE:
+                current_player_color = BLACK
+                next_player_color = WHITE
+            else:
+                current_player_color = WHITE
+                next_player_color = BLACK
+
+            is_promoted = False
+            screen.fill((0, 0, 0))
 
         if is_check:
             board.draw_check_warning(current_player_color)
@@ -107,14 +143,13 @@ def main():
         if is_piece_draging:
             board.draw_valid_moves(focused_piece)
 
-        if is_promoted:
-            board.pawn_promotion(focused_piece)
-            is_promoted = False
-
-        # update objects on screen
         board.update()
 
         screen.blit(board, (board_offset_x, board_offset_y))
+
+        if is_promoted:
+            dialog.draw(screen)
+
         pygame.display.flip()
 
         clock.tick(60)

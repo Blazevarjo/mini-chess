@@ -59,21 +59,21 @@ class Board(pygame.Surface):
         self.sprites_group.remove(piece)
         self.sprites_group.add(piece)
 
-    def pawn_promotion(self, pawn):
-        x = input("Podaj litere")
+    def pawn_promotion(self, pawn, promotion_piece):
+
         promoted_piece = None
-        if x == 'n':
+        if promotion_piece == 'N':
             promoted_piece = Knight(pawn.color, pawn.x, pawn.y)
-        elif x == 'r':
+        elif promotion_piece == 'R':
             promoted_piece = Rook(pawn.color, pawn.x, pawn.y)
-        elif x == 'q':
+        elif promotion_piece == 'Q':
             promoted_piece = Queen(pawn.color, pawn.x, pawn.y)
         else:
-            print('wrong')
+            ValueError("Wrong piece")
         self.array[pawn.y][pawn.x] = promoted_piece
+        self.set_piece_position(promoted_piece)
         self.pieces.remove(pawn)
         self.pieces.append(promoted_piece)
-        # promoted_piece.generate_valid_moves(self.array)
         pawn.kill()
         self.sprites_group.add(promoted_piece)
 
