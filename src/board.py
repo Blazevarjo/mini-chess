@@ -27,14 +27,14 @@ class Board(pygame.Surface):
 
         # board but in matrix 6x6
         self.array = [
-            [Rook(BLACK, 0, 0), Knight(BLACK, 1, 0), King(BLACK, 2, 0),
-             Queen(BLACK, 3, 0), Knight(BLACK, 4, 0), Rook(BLACK, 5, 0)],
+            [Rook(BLACK, 0, 0), Knight(BLACK, 1, 0), Queen(BLACK, 2, 0),
+             King(BLACK, 3, 0), Knight(BLACK, 4, 0), Rook(BLACK, 5, 0)],
             [Pawn(BLACK, x, 1) for x in range(6)],
             [None for x in range(6)],
             [None for x in range(6)],
             [Pawn(WHITE, x, 4) for x in range(6)],
-            [Rook(WHITE, 0, 5), Knight(WHITE, 1, 5), King(WHITE, 2, 5),
-             Queen(WHITE, 3, 5), Knight(WHITE, 4, 5), Rook(WHITE, 5, 5)]
+            [Rook(WHITE, 0, 5), Knight(WHITE, 1, 5), Queen(WHITE, 2, 5),
+             King(WHITE, 3, 5), Knight(WHITE, 4, 5), Rook(WHITE, 5, 5)]
         ]
 
         # flatten 2d array and get only valid pieces to draw (delete None values)
